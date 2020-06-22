@@ -1,0 +1,548 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="/static/cs/dashboard.css href="styles.css">
+</head>
+<body>
+    <main>
+    <div class="container my-5">
+        <div class="card-body text-center">
+            <h4 class="card-title">Casting Agency</h4>
+            <a id="qsLogoutBtn" class="btn btn-default" style="float: right;" href="/logout">
+                <span class="glyphicon glyphicon-log-out"></span> Log out
+            </a>
+        </div>
+        <div class="card-body text-center">
+            <h2 class="card-title">Actors</h4>
+        </div>
+        <div class="card">
+            {% if "post:actors" in permissions %}
+                <button id="add__new__list" type="button" class="btn btn-success" style="float: right;" data-toggle="modal" data-target="#AddActor" >Add a new Actor</button>
+            {% endif %}
+            <table class="table table-hover" >
+                <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Age</th>
+                    <th scope="col">Gender</th>
+                    {% if "patch:actors" in permissions %}
+                        <th scope="col">Edit</th>
+                    {% endif %}
+                    {% if "delete:actors" in permissions %}
+                        <th scope="col">Delete</th>
+                    {% endif %}
+                </tr>
+                </thead>
+                <tbody id = "actor_table">
+                </tbody>
+            </table>
+        </div>
+        <div class="card-body text-center">
+            <h2 class="card-title">Movies</h4>
+        </div>
+        {% if "post:movies" in permissions %}
+            <button id="add__new__list" type="button" class="btn btn-success" style="float: right;" data-toggle="modal" data-target="#AddMovie">Add a new Movie</button>
+        {% endif %} 
+        <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Release Date</th>
+                    {% if "patch:movies" in permissions %}
+                        <th scope="col">Edit</th>
+                    {% endif %}
+                    {% if "delete:movies" in permissions %}
+                        <th scope="col">Delete</th>
+                    {% endif %}
+                </tr>
+                </thead>
+                <tbody id = "movie_table">
+                </tbody>
+            </table>
+        </div>
+    </div>
+    </main>
+    <div class="modal fade" id="AddActor" role="dialog">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Actor</h5>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                    <label for="usr">Name:</label>
+                    <input type="text" class="form-control" id="actor_name">
+                    </div>
+                    <div class="form-group">
+                    <label for="pwd">Age:</label>
+                    <input type="number" class="form-control" id="actor_age">
+                    </div>
+                    <label for="sel1">Gender:</label>
+                    <select class="form-control" id="actor_gender">
+                        <option value = "Male">Male</option>
+                        <option value = "Female">Female</option>
+                    </select>
+                </form>
+            </div>
+            <div class="modal-footer">
+            <button id = "btn_add_actor" class="btn btn-default" onclick = "add_actor()">Add Actor</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal" id = "close_add_actor">Close</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="UpdateActor" role="dialog">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Actor</h5>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <label id = "update_actor_id" style="display:none;"></label>
+                    <div class="form-group">
+                    <label for="usr">Name:</label>
+                    <input type="text" class="form-control" id="update_actor_name">
+                    </div>
+                    <div class="form-group">
+                    <label for="pwd">Age:</label>
+                    <input type="number" class="form-control" id="update_actor_age">
+                    </div>
+                    <label for="sel1">Gender:</label>
+                    <select class="form-control" id="update_actor_gender">
+                        <option value = "Male">Male</option>
+                        <option value = "Female">Female</option>
+                    </select>
+                </form>
+            </div>
+            <div class="modal-footer">
+            <button id = "btn_update_actor" class="btn btn-default" onclick="update_actor()">Update Actor</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal" id = "close_update_actor">Close</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="AddMovie" role="dialog">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Movie</h5>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                    <label for="usr">Name:</label>
+                    <input type="text" class="form-control" id="movie_name">
+                    </div>
+                    <div class="form-group">
+                    <label for="pwd">Release date:</label>
+                    <input class="form-control" id="movie_release_date" placeholder="YYYY-MM-DD">
+                    </div>
+                    
+                </form>
+            </div>
+            <div class="modal-footer">
+            <button id = "btn_add_movie" class="btn btn-default" onclick = "add_movie()">Add movie</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal" id = "close_add_movie">Close</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="UpdateMovie" role="dialog">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Movie</h5>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <label id = "update_movie_id" style="display:none;"></label>
+                    <div class="form-group">
+                    <label for="usr">Name:</label>
+                    <input type="text" class="form-control" id="update_movie_name">
+                    </div>
+                    <div class="form-group">
+                    <label for="pwd">Release date:</label>
+                    <input  class="form-control" id="update_release_date" placeholder="YYYY-MM-DD">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+            <button id = "btn_update_movie" class="btn btn-default" onclick="update_movie()">Update Movie</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal" id = "close_update_movie">Close</button>
+            </div>
+        </div>
+        </div>
+    </div>
+</body>
+
+<script>
+    fetch('/actors', {
+    method: 'GET',
+    headers: {
+        'Content-Type': 'application/json'
+    }
+    })
+    .then(response => response.json())
+    .then(jsonResponse => {
+        actor_table = document.getElementById("actor_table")
+        for (i = 0; i < jsonResponse.actors.length; i++) {
+            console.log(jsonResponse.actors[i].name)
+            var row = actor_table.insertRow(0);
+            row.id = "actor_" +jsonResponse.actors[i].id
+            var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+            var cell3 = row.insertCell(2);
+            {% if "patch:actors" in permissions %}
+            var cell4 = row.insertCell(3);
+            {% endif %}
+            {% if "delete:actors" in permissions %}
+            var cell5 = row.insertCell(4);
+            {% endif %}
+            cell1.innerHTML = jsonResponse.actors[i].name;
+            cell2.innerHTML = jsonResponse.actors[i].age;
+            cell3.innerHTML = jsonResponse.actors[i].gender;
+            {% if "patch:actors" in permissions %}
+            cell4.innerHTML = '<a class="btn btn-sm btn-primary" data-toggle="modal" data-target="#UpdateActor" onclick= "open_update_modal('+ jsonResponse.actors[i].id +')" id =actor_'+ jsonResponse.actors[i].id +'><i class="far fa-edit"></i> edit </a>';
+            {% endif %}
+            {% if "delete:actors" in permissions %}
+            cell5.innerHTML = '<a class="btn btn-sm btn-danger" onclick="delete_actor('+ jsonResponse.actors[i].id +')" id =actor_'+ jsonResponse.actors[i].id+'><i class="fas fa-trash-alt"></i> delete</a> ';
+            {% endif %}
+        }
+    })
+    .catch(function() {
+        console.log("Failure")
+        alert("Failed to get actors")
+    })
+    
+    function add_actor(){
+        name = document.getElementById("actor_name").value
+        if(name == ""){
+            alert("Name empty")
+            return
+        }
+        age = document.getElementById("actor_age").value
+        if(age == ""){
+            alert("Age empty")
+            return
+        }
+        var e = document.getElementById("actor_gender");
+        var gender= e.options[e.selectedIndex].value;
+        data = {
+            "name" : name,
+            "age" : age,
+            "gender" : gender
+        }
+        fetch('/actors', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+        body : JSON.stringify(data)
+		})
+		.then(response => response.json())
+		.then(jsonResponse => {
+			console.log(jsonResponse)
+            actor_table = document.getElementById("actor_table")
+            var row = actor_table.insertRow(0);
+            row.id = "actor_" + jsonResponse.created.id
+            var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+            var cell3 = row.insertCell(2);
+            {% if "patch:actors" in permissions %}
+            var cell4 = row.insertCell(3);
+            {% endif %}
+            {% if "delete:actors" in permissions %}
+            var cell5 = row.insertCell(4);
+            {% endif %}
+            cell1.innerHTML = jsonResponse.created.name;
+            cell2.innerHTML = jsonResponse.created.age;
+            cell3.innerHTML = jsonResponse.created.gender;
+            {% if "patch:actors" in permissions %}
+            cell4.innerHTML = '<a class="btn btn-sm btn-primary"  data-toggle="modal" data-target="#UpdateActor" onclick= "open_update_modal('+jsonResponse.created.id +')" id =actor_'+ jsonResponse.created.id +'><i class="far fa-edit"></i> edit </a>';
+            {% endif %}
+            {% if "delete:actors" in permissions %}
+            cell5.innerHTML = '<a class="btn btn-sm btn-danger" onclick = "delete_actor('+jsonResponse.created.id +')" id =actor_'+ jsonResponse.created.id+'><i class="fas fa-trash-alt"></i> delete</a> ';
+            {% endif %}
+        })
+		.catch(function() {
+			console.log("Failure")
+			alert("Failed to add Actor")
+		})
+        document.getElementById("close_add_actor").click();
+    }
+    
+    function delete_actor(id){
+        fetch('/actors/' + id, {
+		method: 'DELETE',
+		headers: {
+			'Content-Type': 'application/json'
+		}
+		})
+		.then(response => response.json())
+		.then(jsonResponse => {
+			console.log(jsonResponse)
+            var row = document.getElementById("actor_" + id);
+            {% if "delete:actors" in permissions %}
+            row.deleteCell(4);
+            {% endif %}
+            {% if "patch:actors" in permissions %}
+            row.deleteCell(3);
+            {% endif %}
+            row.deleteCell(2);
+            row.deleteCell(1);
+            row.deleteCell(0);
+		})
+		.catch(function() {
+			console.log("Failure")
+			alert("Failed to delete actor")
+		})
+    }
+    
+    function open_update_modal(id){
+        document.getElementById("update_actor_name").value = document.getElementById("actor_"+id).cells[0].innerHTML
+        document.getElementById("update_actor_age").value = document.getElementById("actor_"+id).cells[1].innerHTML
+        let element = document.getElementById("update_actor_gender");
+        element.value = document.getElementById("actor_"+id).cells[2].innerHTML
+        document.getElementById("update_actor_id").value = id
+    }
+
+    function update_actor(){
+        id = document.getElementById("update_actor_id").value
+        name = document.getElementById("update_actor_name").value
+        if(name == ""){
+            alert("Name empty")
+            return
+        }
+        age = document.getElementById("update_actor_age").value
+        if(age == ""){
+            alert("Age empty")
+            return
+        }
+        var e = document.getElementById("update_actor_gender");
+        var gender= e.options[e.selectedIndex].value;
+        data = {
+            "name" : name,
+            "age" : age,
+            "gender" : gender
+        }
+        fetch('/actors/' + id, {
+		method: 'PATCH',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+        body : JSON.stringify(data)
+		})
+		.then(response => response.json())
+		.then(jsonResponse => {
+			console.log(jsonResponse)
+            var x = document.getElementById("actor_"+id).cells;
+            console.log(x)
+            x[0].innerHTML = jsonResponse.actor.name
+            x[1].innerHTML = jsonResponse.actor.age
+            x[2].innerHTML = jsonResponse.actor.gender
+            document.getElementById("close_update_actor").click()
+		})
+		.catch(function() {
+			console.log("Failure")
+			alert("Failed to update actor")
+		})
+	}
+
+    fetch('/movies', {
+    method: 'GET',
+    headers: {
+        'Content-Type': 'application/json'
+    }
+    })
+    .then(response => response.json())
+    .then(jsonResponse => {
+        console.log(jsonResponse)
+        movie_table = document.getElementById("movie_table")
+        for (i = 0; i < jsonResponse.movies.length; i++) {
+            var row = movie_table.insertRow(0);
+            row.id = "movie_" + jsonResponse.movies[i].id
+            var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+            var cell3 = row.insertCell(2);
+            {% if "patch:movies" in permissions %}
+            var cell4 = row.insertCell(3);
+            {% endif %}
+            {% if "delete:movies" in permissions %}
+            var cell5 = row.insertCell(4);
+            {% endif %}
+            cell1.innerHTML = jsonResponse.movies[i].id;
+            cell2.innerHTML = jsonResponse.movies[i].title;
+            cell3.innerHTML = convert(jsonResponse.movies[i].release_date);
+            {% if "patch:movies" in permissions %}
+            cell4.innerHTML = ' <a class="btn btn-sm btn-primary" data-toggle="modal" data-target="#UpdateMovie" onclick= "open_update_movie_modal('+ jsonResponse.movies[i].id +')" id =movie_'+ jsonResponse.movies[i].id +'><i class="far fa-edit"></i> edit </a>'; 
+            {% endif %}
+            {% if "delete:movies" in permissions %}
+            cell5.innerHTML = '<a class="btn btn-sm btn-danger" onclick="delete_movie('+ jsonResponse.movies[i].id +')" id =movie_'+ jsonResponse.movies[i].id+'><i class="fas fa-trash-alt"></i> delete</a> ';
+            {% endif %}
+        }
+    })
+    .catch(function() {
+        console.log("Failure")
+        alert("Failed to get movies")
+    })
+    
+    function add_movie(){
+        name = document.getElementById("movie_name").value
+        if(name == ""){
+            alert("Movie name empty")
+            return
+        }
+        movie_release_date = document.getElementById("movie_release_date").value
+        console.log(movie_release_date, "fvdffdsf", name)
+        if(movie_release_date == ""){
+            alert("Release date empty 11")
+            return
+        }
+        if(isValidDate(movie_release_date) == false){
+            alert("Invalid date")
+        }
+        data = {
+            "title" : name,
+            "release_date" : movie_release_date
+        }
+        fetch('/movies', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+        body : JSON.stringify(data)
+		})
+		.then(response => response.json())
+		.then(jsonResponse => {
+			console.log(jsonResponse)
+            movie_table = document.getElementById("movie_table")
+            var row = movie_table.insertRow(0);
+            row.id = "movie_" +jsonResponse.created.id
+            var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+            var cell3 = row.insertCell(2);
+            {% if "patch:movies" in permissions %}
+            var cell4 = row.insertCell(3);
+            {% endif %}
+            {% if "delete:movies" in permissions %}
+            var cell5 = row.insertCell(4);
+            {% endif %}
+            cell1.innerHTML = jsonResponse.created.id;
+            cell2.innerHTML = jsonResponse.created.title;
+            cell3.innerHTML = convert(jsonResponse.created.release_date);
+            {% if "patch:movies" in permissions %}
+            cell4.innerHTML = '<a class="btn btn-sm btn-primary"  data-toggle="modal" data-target="#UpdateMovie" onclick= "open_update_movie_modal('+ jsonResponse.created.id +')" id =movie_'+ jsonResponse.created.id +'><i class="far fa-edit"></i> edit </a>'
+            {% endif %}
+            {% if "delete:movies" in permissions %}
+            cell5.innerHTML = '<a class="btn btn-sm btn-danger" onclick = "delete_movie('+jsonResponse.created.id +')" id =movie_'+ jsonResponse.created.id+'><i class="fas fa-trash-alt"></i> delete</a> ';
+            {% endif %}
+        })
+		.catch(function() {
+			console.log("Failure")
+			alert("Failed to add Movie")
+		})
+        document.getElementById("close_add_movie").click();
+    }
+
+    function isValidDate(dateString) {
+        var regEx = /^\d{4}-\d{2}-\d{2}$/;
+        if(!dateString.match(regEx)) return false;  // Invalid format
+        var d = new Date(dateString);
+        var dNum = d.getTime();
+        if(!dNum && dNum !== 0) return false; // NaN value, Invalid date
+        return d.toISOString().slice(0,10) === dateString;
+    }
+
+    function delete_movie(id){
+        fetch('/movies/' + id, {
+		method: 'DELETE',
+		headers: {
+			'Content-Type': 'application/json'
+		}
+		})
+		.then(response => response.json())
+		.then(jsonResponse => {
+			console.log(jsonResponse)
+            var row = document.getElementById("movie_"+id);
+            {% if "delete:movies" in permissions %} 
+            row.deleteCell(4);  
+            {% endif %}
+            {% if "patch:movies" in permissions %} 
+            row.deleteCell(3);
+            {% endif %}
+            row.deleteCell(2);
+            row.deleteCell(1);
+            row.deleteCell(0);
+		})
+		.catch(function() {
+			console.log("Failure")
+			alert("Failed to delete movie")
+		})
+    }
+
+    function open_update_movie_modal(id){
+        document.getElementById("update_movie_name").value = document.getElementById("movie_"+id).cells[1].innerHTML
+        document.getElementById("update_release_date").value = document.getElementById("movie_"+id).cells[2].innerHTML
+        document.getElementById("update_movie_id").value = id
+    }
+
+    function update_movie(){
+        id = document.getElementById("update_movie_id").value
+        name = document.getElementById("update_movie_name").value
+        if(name == ""){
+            alert("Movie name empty")
+            return
+        }
+        movie_release_date = document.getElementById("update_release_date").value
+        console.log(movie_release_date, "fvdffdsf", name)
+        if(movie_release_date == ""){
+            alert("Release date empty 11")
+            return
+        }
+        if(isValidDate(movie_release_date) == false){
+            alert("Invalid date")
+        }
+        data = {
+            "title" : name,
+            "release_date" : movie_release_date
+        }
+        fetch('/movies/' + id, {
+		method: 'PATCH',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+        body : JSON.stringify(data)
+		})
+		.then(response => response.json())
+		.then(jsonResponse => {
+			console.log(jsonResponse)
+            var x = document.getElementById("movie_"+id).cells;
+            console.log(x)
+            x[0].innerHTML = jsonResponse.movie.id
+            x[1].innerHTML = jsonResponse.movie.title
+            x[2].innerHTML = convert(jsonResponse.movie.release_date)
+            document.getElementById("close_update_movie").click()
+		})
+		.catch(function() {
+			console.log("Failure")
+			alert("Failed to update movie")
+		})
+	}
+
+    function convert(str) {
+        var date = new Date(str),
+        mnth = ("0" + (date.getMonth() + 1)).slice(-2),
+        day = ("0" + date.getDate()).slice(-2);
+        return [date.getFullYear(), mnth, day].join("-");
+    }
+</script>
